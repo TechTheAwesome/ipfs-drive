@@ -1,3 +1,9 @@
+#build
+build/
+
+#test coverage
+coverage/
+
 # Logs
 logs
 *.log
