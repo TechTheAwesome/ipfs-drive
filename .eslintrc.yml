@@ -18,3 +18,4 @@ plugins:
 rules: {
   indent: ["warn", 2]
 }
+ignorePatterns: ["*.js", "build/**/*"]
