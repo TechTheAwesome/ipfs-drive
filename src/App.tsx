@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import FileStore from './components/FileStore';
 import Keys from './components/Keys';
 import NavBar from './components/NavBar';
@@ -17,14 +17,14 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <HashRouter>
+      <BrowserRouter>
         <NavBar/>
         <Routes>
           <Route path='/' element={<Setup />}/>
-          <Route path='drive' element={<FileStore/>}/>
+          <Route path='store' element={<FileStore/>}/>
           <Route path='keys' element={<Keys/>}/>
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

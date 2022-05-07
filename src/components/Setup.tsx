@@ -9,7 +9,7 @@ export default function Setup() {
       <br/>
       <List>
         <ListItem>
-          <ListItemButton component='a' href="/#/drive" divider>
+          <ListItemButton component='a' href="/store" divider>
             <ListItemIcon>
               <EditNotifications/>
             </ListItemIcon>
@@ -17,7 +17,7 @@ export default function Setup() {
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton component='a' href="/#/keys">
+          <ListItemButton component='a' href="/keys">
             <ListItemIcon>
               <EditNotifications/>
             </ListItemIcon>
