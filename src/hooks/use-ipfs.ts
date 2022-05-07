@@ -1,57 +1,27 @@
 import { create, IPFSHTTPClient } from 'ipfs-http-client'
 import { useEffect, useState } from 'react'
 
-let ipfs: IPFSHTTPClient|null = null
-
-/*
- * A quick demo using React hooks to create an ipfs instance.
- *
- * Hooks are brand new at the time of writing, and this pattern
- * is intended to show it is possible. I don't know if it is wise.
- *
- * Next steps would be to store the ipfs instance on the context
- * so use-ipfs calls can grab it from there rather than expecting
- * it to be passed in.
- */
 export default function useIpfs () {
-  const [isIpfsReady, setIpfsReady] = useState(Boolean(ipfs))
-  const [ipfsInitError, setIpfsInitError] = useState()
+  const [url, setUrl] = useState('http://localhost:5001/api/v0');
+  const [ipfs, setIpfs] = useState<IPFSHTTPClient|null>(null);
+  const [initError, setError] = useState<any>();
 
   useEffect(() => {
-    // The fn to useEffect should not return anything other than a cleanup fn,
-    // So it cannot be marked async, which causes it to return a promise,
-    // Hence we delegate to a async fn rather than making the param an async fn.
-
-    startIpfs()
-    // ipfs-http-client doesn't need cleaning up!
-    // return function cleanup () {
-    //   if (ipfs && ipfs.stop) {
-    //     console.log('Stopping IPFS')
-    //     ipfs.s
-    //     ipfs.stop().catch(err => console.error(err))
-    //     ipfs = null
-    //     setIpfsReady(false)
-    //   }
-    // }
-  }, [])
-
-  async function startIpfs () {
-    if(!ipfs) {
+    async function startIpfs () {
       try {
         console.time('IPFS Started')
-        ipfs = await create({
-          url: 'http://localhost:5001/api/v0'
-        });
+        setIpfs(await create({
+          url: url,
+        }));
         console.timeEnd('IPFS Started')
       } catch (error) {
         console.error('IPFS init error:', error)
-        ipfs = null
-        setIpfsInitError(error as any)
-        setIpfsReady(false);
+        setIpfs(null)
+        setError(error);
       }
     }
-    setIpfsReady(Boolean(ipfs))
-  }
+    startIpfs();
+  }, [url])
 
-  return { ipfs, isIpfsReady, ipfsInitError };
+  return { ipfs, initError, setUrl };
 }

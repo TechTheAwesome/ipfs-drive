@@ -1,52 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Button, CircularProgress, Container } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Container } from "@mui/material";
 import Drive from "./Drive";
-import useIpfs from "../hooks/use-ipfs";
-import { STORE } from "../ipfs/client";
+import { IPFS_STORE } from "../env";
+import { useMkdir, useStat } from "../hooks/useMFS";
 
 
 export default function FileStore() {
-  const [store, setStore] = useState<string | undefined>(undefined);
   const [processing, setProcessing] = useState<boolean>(true);
-  const { ipfs } = useIpfs();
+  const [stat, statError] = useStat(IPFS_STORE);
+  const [mkdir, mkdirError] = useMkdir();
 
   useEffect(() => {
-    setProcessing(true);
-    if(!ipfs) return;
-    ipfs.files.stat('/'+STORE)
-      .then(a => {
-        if(a.type === 'directory')
-          setStore(STORE);
-        setProcessing(false);
-      })
-      .catch(e => {
-        setStore(undefined)
-        setProcessing(false);
-      })
-  }, [store, ipfs]);
+    if(stat) setProcessing(false);
+    else setProcessing(true);
+  }, [stat])
 
   function StoreCreate() {
-    const { ipfs } = useIpfs();
     return (
       <Container>
         <h1 className=" text-center text-5xl">Please Create A new Store to Continue</h1>
-        <Button variant='contained' onClick={async () => {
-          if(!ipfs) return;
-          await ipfs.files.mkdir('/'+ STORE).then(() => setStore('/'+ STORE)) 
-        }}>
+        <Button variant='contained' onClick={() => mkdir(IPFS_STORE)}>
         CreateStore
         </Button>
+        <h1 className=" text-center text-2xl">{mkdirError && mkdirError.toString()}</h1>
       </Container>
     );
   }
 
   return (
     <Container>
+      <Backdrop open={processing}>
+        <CircularProgress />
+      </Backdrop>
       {
         (() => {
-          if(store) return <Drive/>
-          if(!processing) return <StoreCreate />
-          return <CircularProgress />
+          if(stat?.type !== 'directory') return <Drive/>
+          return <StoreCreate />
         })()
       }
     </Container>
