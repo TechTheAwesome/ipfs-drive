@@ -1,16 +1,18 @@
 import { KeyRounded } from "@mui/icons-material";
 import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { GetIPFS } from "../ipfs/client";
-
+import useIpfs from "../hooks/use-ipfs";
 export default function Keys() {
   const [items, setItems] = useState<JSX.Element[]>();
+  const {ipfs } = useIpfs();
+  
   useEffect(() => {
-    GetIPFS().key.list()
+    if(!ipfs) return;
+    ipfs.key.list()
       .then(l => setItems(l.map(i => 
         <ListItem key={i.id}>
           <ListItemButton onClick={async () => {
-            console.log(await GetIPFS().key.export(i.name, "password"))
+            console.log(await ipfs.key.export(i.name, "password"))
           }}>
             <ListItemIcon>
               <KeyRounded/>

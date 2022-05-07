@@ -3,32 +3,25 @@ import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText }
 import { EditNotifications } from "@mui/icons-material";
 
 export default function Setup() {
+
   return (
     <Container maxWidth="xs">
       <br/>
       <List>
         <ListItem>
-          <ListItemButton onClick={() => console.log('hi')} divider>
+          <ListItemButton component='a' href="/#/drive" divider>
             <ListItemIcon>
               <EditNotifications/>
             </ListItemIcon>
-            <ListItemText primary="Create a new drive" secondary="psst, this will use the key you set or will generate a random key!" />
+            <ListItemText primary="Manage drives" secondary="" />
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton>
+          <ListItemButton component='a' href="/#/keys">
             <ListItemIcon>
               <EditNotifications/>
             </ListItemIcon>
-            <ListItemText primary="Edit Drive" secondary="hey~" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem>
-          <ListItemButton>
-            <ListItemIcon>
-              <EditNotifications/>
-            </ListItemIcon>
-            <ListItemText primary="Edit Drive" secondary="hey~" />
+            <ListItemText primary="Manage keys" secondary="hey~" />
           </ListItemButton>
         </ListItem>
       </List>
