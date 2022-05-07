@@ -1,26 +1,57 @@
-import { useState, useEffect, SetStateAction } from 'react'
-import { IPFS } from 'ipfs-core'
-// dot-prop: used to obtain a property of an object when the name of property is a string
-// here we get ipfs.id when calling dotProp.get(ipfs, cmd), with cmd = 'id'
-// and we get ipfs.hash when calling with cmd = 'hash' etc.
+import { create, IPFSHTTPClient } from 'ipfs-http-client'
+import { useEffect, useState } from 'react'
+
+let ipfs: IPFSHTTPClient|null = null
 
 /*
- * Pass the command you'd like to call on an ipfs instance.
+ * A quick demo using React hooks to create an ipfs instance.
  *
-* callIpfs uses setState write the response as a state variable, so that your component
- * will re-render when the result 'res' turns up from the call await ipfsCmd.
+ * Hooks are brand new at the time of writing, and this pattern
+ * is intended to show it is possible. I don't know if it is wise.
  *
+ * Next steps would be to store the ipfs instance on the context
+ * so use-ipfs calls can grab it from there rather than expecting
+ * it to be passed in.
  */
-export default function useIpfs (ipfs: IPFS) {
-  const [res, setRes] = useState(null)
-  useEffect(() => {
-    callIpfs(ipfs, setRes)
-  }, [ipfs])
-  return res
-}
+export default function useIpfs () {
+  const [isIpfsReady, setIpfsReady] = useState(Boolean(ipfs))
+  const [ipfsInitError, setIpfsInitError] = useState()
 
-async function callIpfs (ipfs: IPFS, setRes: { (value: SetStateAction<null>): void; (arg0: any): void }, ) {
-  if(!ipfs) return;
-  const result = await ipfs.id();
-  setRes(result)
+  useEffect(() => {
+    // The fn to useEffect should not return anything other than a cleanup fn,
+    // So it cannot be marked async, which causes it to return a promise,
+    // Hence we delegate to a async fn rather than making the param an async fn.
+
+    startIpfs()
+    // ipfs-http-client doesn't need cleaning up!
+    // return function cleanup () {
+    //   if (ipfs && ipfs.stop) {
+    //     console.log('Stopping IPFS')
+    //     ipfs.s
+    //     ipfs.stop().catch(err => console.error(err))
+    //     ipfs = null
+    //     setIpfsReady(false)
+    //   }
+    // }
+  }, [])
+
+  async function startIpfs () {
+    if(!ipfs) {
+      try {
+        console.time('IPFS Started')
+        ipfs = await create({
+          url: 'http://localhost:5001/api/v0'
+        });
+        console.timeEnd('IPFS Started')
+      } catch (error) {
+        console.error('IPFS init error:', error)
+        ipfs = null
+        setIpfsInitError(error as any)
+        setIpfsReady(false);
+      }
+    }
+    setIpfsReady(Boolean(ipfs))
+  }
+
+  return { ipfs, isIpfsReady, ipfsInitError };
 }
