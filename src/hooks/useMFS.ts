@@ -17,6 +17,7 @@ export function useLs(path: string): [MFSEntry[]|undefined, any] {
         const entries = await all(ipfs.files.ls(path));
         if(entries) setEntries(entries);
         else setEntries(undefined);
+        setError(undefined);
       }catch (error) {
         setEntries(undefined);
         setError(error);
@@ -36,8 +37,12 @@ export function useStat(path: string): [StatResult|undefined, any] {
     console.log('called ');
     (async function() {
       if(!ipfs) return setError("IPFS not initiaized!");
-      ipfs.files.stat(path)
-        .then(stat => setStat(stat))
+      try {
+        setStat(await ipfs.files.stat(path))
+        setError(undefined);
+      } catch (error) {
+        setError(error);
+      }
     })()
   }, [ipfs, path])
 
@@ -52,6 +57,7 @@ export function useMkdir(): [ (path: string) => Promise<void>, any ] {
     if(!ipfs) return setError("IPFS not initiaized!");
     try {
       await ipfs.files.mkdir(path);
+      setError(undefined);
     }catch (error) {
       console.log('make dir error! ' + error)
       setError(error);
