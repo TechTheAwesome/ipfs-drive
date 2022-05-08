@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Backdrop, Button, CircularProgress, Container } from "@mui/material";
-import Drive from "./Drive";
-import { IPFS_STORE } from "../env";
-import { useMkdir, useStat } from "../hooks/useMFS";
+import StoreList from "./StoreList";
+import { IPFS_STORE } from "../../env";
+import { useMkdir, useStat } from "../../hooks/useMFS";
 
 
 export default function FileStore() {
   const [processing, setProcessing] = useState<boolean>(true);
-  const [stat, statError] = useStat(IPFS_STORE);
+  const [stat] = useStat(IPFS_STORE);
   const [mkdir, mkdirError] = useMkdir();
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function FileStore() {
       </Backdrop>
       {
         (() => {
-          if(stat?.type !== 'directory') return <Drive/>
+          if(stat?.type === 'directory') return <StoreList/>
           return <StoreCreate />
         })()
       }
