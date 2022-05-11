@@ -2,10 +2,10 @@ import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
 import React from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
-import FileStore from './components/FileStore';
-import Keys from './components/Keys';
+import FileStore from './components/Store/FileStore';
 import NavBar from './components/NavBar';
 import Setup from './components/Setup';
+import Drive from './components/Drive/Drive';
 
 const theme = createTheme({
   palette: {
@@ -22,7 +22,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Setup />}/>
           <Route path='store' element={<FileStore/>}/>
-          <Route path='keys' element={<Keys/>}/>
+          <Route path='drive' element={<Drive />}/>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
