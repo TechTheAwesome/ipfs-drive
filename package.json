@@ -20,6 +20,7 @@
     "ipfs-core": "^0.14.3",
     "ipfs-http-client": "^56.0.3",
     "it-all": "^1.0.6",
+    "it-to-buffer": "^2.0.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
