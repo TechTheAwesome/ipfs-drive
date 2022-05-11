@@ -2,6 +2,8 @@ import all from "it-all";
 import { useEffect, useState } from "react"
 import useIpfs from "./use-ipfs";
 import { MFSEntry, StatResult } from 'ipfs-core-types/src/files'
+import { IPFS_STORE_PATH } from "../env";
+import toBuffer from "it-to-buffer";
 
 export function useLs(path: string): [MFSEntry[]|undefined, any] {
   const {ipfs} = useIpfs();
@@ -24,7 +26,7 @@ export function useLs(path: string): [MFSEntry[]|undefined, any] {
       }
     })()
   }, [ipfs, path]);
-
+  
   return [entries, error]
 }
 
@@ -65,4 +67,43 @@ export function useMkdir(): [ (path: string) => Promise<void>, any ] {
   }
 
   return [mkdir, error]
+}
+
+export function useWriteJson(): [(path: string, json: string) => Promise<void>, any] {
+  const {ipfs} = useIpfs();
+  const [error, setError] = useState<any>(null);
+  
+  async function writeJson(path: string, json: string) {
+    if(!ipfs) return setError("IPFS not initiaized!");
+    try{
+      await ipfs.files.write(IPFS_STORE_PATH, JSON.stringify(test))
+      setError(null);
+    }catch(e) {
+      setError(e);
+    }
+  }
+
+  return [writeJson, error];
+}
+
+export function useReadJson(path: string) {
+  const {ipfs} = useIpfs();
+  const [json, setJson] = useState<any>();
+  const [error, setError] = useState<any>(null);
+
+  useEffect(() => {
+    (async function() {
+      if(!ipfs) return setError("IPFS not initiaized!");
+      try {
+        const chunks = await toBuffer(ipfs.files.read(path));
+        const string = new TextDecoder().decode(chunks);
+        const json = JSON.parse(string);
+        setJson(json);
+      } catch (error) {
+        setError(error);
+      }
+    })()
+  }, [ipfs, path])
+
+  return [json, error];
 }
