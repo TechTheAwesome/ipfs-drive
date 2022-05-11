@@ -3,16 +3,15 @@ import { IPFS_CONFIG_PATH } from "../env";
 import { useReadJson, useWriteJson } from "./useMFS";
 
 export type TSetting = {
-  drive: [
-    {
+  drive: 
+  {
+    name: string,
+    key: {
       name: string,
-      key: {
-        name: string,
-        ID: string
-      },
-      currentExpectResolveCID: string
-    }
-  ]
+      ID: string
+    },
+    currentExpectResolveCID: string
+  }[]
 }
 
 export function useSetting(): [TSetting|undefined, any, (setting: TSetting) => void, any] {
