@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Backdrop, Button, CircularProgress, Container } from "@mui/material";
 import StoreList from "./StoreList";
-import { IPFS_STORE } from "../../env";
+import { IPFS_STORE_PATH } from "../../env";
 import { useMkdir, useStat } from "../../hooks/useMFS";
 
 
 export default function FileStore() {
   const [processing, setProcessing] = useState<boolean>(true);
-  const [stat] = useStat(IPFS_STORE);
+  const [stat] = useStat(IPFS_STORE_PATH);
   const [mkdir, mkdirError] = useMkdir();
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function FileStore() {
     return (
       <Container>
         <h1 className=" text-center text-5xl">Please Create A new Store to Continue</h1>
-        <Button variant='contained' onClick={() => mkdir(IPFS_STORE)}>
+        <Button variant='contained' onClick={() => mkdir(IPFS_STORE_PATH)}>
         CreateStore
         </Button>
         <h1 className=" text-center text-2xl">{mkdirError && mkdirError.toString()}</h1>
