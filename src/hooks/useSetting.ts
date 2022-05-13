@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { IPFS_CONFIG_PATH } from "../env";
+import { DEFAULT_SETTING, IPFS_CONFIG_PATH } from "../env";
 import { useReadJson, useWriteJson } from "./useMFS";
 
 export type TSetting = {
@@ -8,13 +7,17 @@ export type TSetting = {
     name: string,
     key: {
       name: string,
-      ID: string
+      id: string
     },
     currentExpectResolveCID: string
+  }[],
+  key: {
+    name: string,
+    id: string
   }[]
 }
 
-export function useSetting(): [TSetting|undefined, any, (setting: TSetting) => void, any] {
+export function useSetting(): [TSetting, any, (setting: TSetting) => void, any] {
   const [json, readError] = useReadJson(IPFS_CONFIG_PATH);
   const [writeJson, writeError] = useWriteJson();
 
@@ -23,10 +26,5 @@ export function useSetting(): [TSetting|undefined, any, (setting: TSetting) => v
     writeJson(IPFS_CONFIG_PATH, string);
   }
 
-  useEffect(() => {
-    if(!json) return 
-
-  })
-
-  return [json as TSetting | undefined, readError, writeSetting, writeError];
+  return [json? json as TSetting: DEFAULT_SETTING, readError, writeSetting, writeError];
 }
